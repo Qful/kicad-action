@@ -46,8 +46,8 @@ clean-test:
 
 test: clean-test build install
 	chmod -x  ./tests/run.sh
-	./tests/run.sh
+	sudo bash ./tests/run.sh
 
 test-ci: clean-test build install-ci
 	chmod -x  ./tests/run.sh
-	./tests/run.sh
+	sudo bash ./tests/run.sh
