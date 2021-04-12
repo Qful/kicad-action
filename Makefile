@@ -45,7 +45,9 @@ clean-test:
 	rm -f tests/log/*.log
 
 test: clean-test build install
-	sudo ./tests/run.sh
+	chmod -x  ./tests/run.sh
+	./tests/run.sh
 
 test-ci: clean-test build install-ci
-	sudo ./tests/run.sh
+	chmod -x  ./tests/run.sh
+	./tests/run.sh
