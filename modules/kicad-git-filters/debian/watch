@@ -1,3 +1,0 @@
-version=3
-https://github.com/INTI-CMNB/kicad-git-filters/tags .*/(\d[\d\.]*)\.(?:tar.gz|tar.bz2|tar.xz)
-
