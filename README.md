@@ -1,10 +1,7 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/nerdyscout/kicad-exports/badge)](https://www.codefactor.io/repository/github/nerdyscout/kicad-exports)
-[![default](https://github.com/nerdyscout/kicad-exports/workflows/default/badge.svg)](https://github.com/nerdyscout/kicad-exports/actions?query=workflow%3Adefault)
+[![test](https://github.com/stopstopstop/kicad-action/workflows/test/badge.svg)](https://github.com/stopstopstop/kicad-action/actions/workflows/test.yaml)
 
-Auto generate exports (schematics, gerbers, plots) for any KiCAD5 project.
-You could run it locally or on every `git push` with Github Actions.
+# usage
 
-# usage of kicad-exports with Github Actions
 ```yaml
 name: example
 
@@ -23,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: nerdyscout/kicad-exports@v2.3
+    - uses: stopstopstop/kicad-action@master
       with:
       # Required - kibot config file
         config: docs.kibot.yaml
@@ -43,11 +40,11 @@ The [predefined configs](/config) do run a ERC and DRC in advance, if these chec
 
 > :warning: Pushing auto generated files back to the same branch you are working on manualy is a bad idea!
 
-# use kicad-exports local 
+# use kicad-exports local
 ## Installation
 You need to have [Docker](https://www.docker.com/) installed.
 ```
-git clone --recursive https://github.com/nerdyscout/kicad-exports /some/where/kicad-exports
+git clone --recursive https://github.com/stopstopstop/kicad-action /some/where/kicad-exports
 cd /some/where/kicad-exports
 make && make install
 ```
@@ -56,14 +53,14 @@ make && make install
 go to your KiCad project folder and run kicad-exports
 ```
 cd /my/kicad/example-project
-kicad-exports -d $DIR_OUT -e $SCHEMA -b $BOARD -c $CONFIG 
+kicad-exports -d $DIR_OUT -e $SCHEMA -b $BOARD -c $CONFIG
 ```
 
 > :warning: running any command your git repository will be modified using [kicad-git-filters](https://github.com/INTI-CMNB/kicad-git-filters/tree/v1.0.1)
 
 ### run with predefined example config
 ```
-kicad-exports -c docs.kibot.yaml 
+kicad-exports -c docs.kibot.yaml
 ```
 
 ### run with own config
@@ -90,7 +87,7 @@ kicad-exports -x $COMMIT_HASH -b myproject.kicad_pcb
 ## running localy enables additional paramaters
 - `-v, --verbose` is useful while developing own config files
 - `-o, --overwrite key=value` overwrite variables in config file
-- `-s, --skip $arg` skips preflight from given config file 
+- `-s, --skip $arg` skips preflight from given config file
 - `-x, --diff $commit_hash` output differential files between $commit_hash and latest commit
 
 # Credits

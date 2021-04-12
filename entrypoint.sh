@@ -33,7 +33,7 @@ function msg_usage {
 function msg_disclaimer {
     echo -e "This is free software: you are free to change and redistribute it"
     echo -e "There is NO WARRANTY, to the extent permitted by law.\n"
-	echo -e "See <https://github.com/nerdyscout/kicad-exports>."
+	echo -e "See <https://github.com/stopstopstop/kicad-action>."
 }
 
 function msg_version {
@@ -118,7 +118,7 @@ function margs_precheck {
 function margs_check {
 	if [ "$#" -lt "$margs" ]; then
         usage
-	    exit $EXIT_ERROR
+        exit $EXIT_ERROR
 	fi
 }
 

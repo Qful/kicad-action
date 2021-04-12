@@ -33,7 +33,7 @@ shell:
 update:
 	docker pull setsoft/kicad_auto:latest
 	git submodule foreach git pull
-	
+
 clean: clean-test
 	docker image rm -f kicad-exports
 	git clean -f -x
@@ -45,7 +45,7 @@ clean-test:
 	rm -f tests/log/*.log
 
 test: clean-test build install
-	./tests/run.sh
+	sudo ./tests/run.sh
 
 test-ci: clean-test build install-ci
-	./tests/run.sh
+	sudo ./tests/run.sh
