@@ -1,4 +1,5 @@
 #!/bin/bash
+ary=()
 
 # Script configurations
 SCRIPT="kicad-exports"
@@ -33,11 +34,11 @@ function msg_usage {
 function msg_disclaimer {
     echo -e "This is free software: you are free to change and redistribute it"
     echo -e "There is NO WARRANTY, to the extent permitted by law.\n"
-	echo -e "See <https://github.com/stopstopstop/kicad-action>."
+	echo -e "See <https://github.com/nerdyscout/kicad-exports>."
 }
 
 function msg_version {
-	echo -e "kicad-exports $BUILD"
+	echo -e "kicad-exports version: $BUILD"
 }
 
 function msg_illegal_arg {
@@ -118,21 +119,47 @@ function margs_precheck {
 function margs_check {
 	if [ "$#" -lt "$margs" ]; then
         usage
-        exit $EXIT_ERROR
+	    exit $EXIT_ERROR
 	fi
 }
 
-function args_process {
-    i=0
+function add_config {
+    if [ -f $1 ]; then
+        ary+=("-c $1")
+    elif [ -f "/opt/kibot/config/$1" ]; then
+        ary+=("-c /opt/kibot/config/$1")
+    else
+        echo "config file '$cfg' not found! Please pass own file or choose from:"
+        ls /opt/kibot/config/*.yaml
+        exit $EXIT_ERROR
+    fi
+}
 
+function args_process {
     while [ -n "$1"  ]; do
         case "$1" in
             -c | --config ) shift
-                ary[$i]="$1"
+                if [ $CI ]; then
+                    for cfg in $(echo "$1 $2") ; do
+                        echo $cfg
+                        add_config $cfg
+                    done
+                else
+                    # only one config given
+                    add_config "$1"
+
+                    # multiple configs given
+                    while [[ "$2" == *.kibot.yaml ]]; do
+                        shift
+                        add_config "$1"
+                    done
+                fi
                 ;;
             -b | --board ) shift
                 if [ -f $1 ]; then
-                    BOARD="$1"
+                    BOARD="-b $1"
+                elif [ -z $1 ]; then
+                    BOARD=""
                 else
                     echo "error: $1 does not exist"
                     exit $EXIT_ERROR
@@ -140,7 +167,9 @@ function args_process {
                 ;;
             -e | --schematic ) shift
                 if [ -f $1 ]; then
-                    SCHEMA="$1"
+                    SCHEMA="-e $1"
+                elif [ -z $1 ]; then
+                    SCHEMA=""
                 else
                     echo "error: $1 does not exist"
                     exit $EXIT_ERROR
@@ -170,13 +199,8 @@ function args_process {
                 exit
                 ;;
             *)
-                if [[ "$1" = *".kibot.yaml" ]]; then
-                    i=`expr $i + 1`
-                    ary[$i]="$1"
-                else
-                    illegal_arg "$@"
-                    exit $EXIT_ERROR
-                fi
+                illegal_arg "$@"
+                exit $EXIT_ERROR
                 ;;
         esac
         shift
@@ -220,33 +244,14 @@ function run {
     if [ $DIR ]; then
         DIR="-d $DIR"
     fi
-    if [ $BOARD ]; then
-        BOARD="-b $BOARD"
-    fi
-    if [ $SCHEMA ]; then
-        SCHEMA="-e $SCHEMA"
-    fi
-
-    for cfg in ${ary[*]} ; do
-        CONFIG="-c $(echo "$cfg" | tr -d '[:space:]')"
-
-        if [ -f $cfg ]; then
-            kibot $CONFIG $DIR $BOARD $SCHEMA $SKIP $OVERWRITE $VERBOSE
-        elif [ -f "/opt/kibot/config/$cfg" ]; then
-            kibot -c /opt/kibot/config/$cfg $DIR $BOARD $SCHEMA $SKIP $OVERWRITE $VERBOSE
-        else
-            echo "config file '$cfg' not found! Please pass own file or choose from:"
-            ls /opt/kibot/config/*.yaml
-            exit $EXIT_ERROR
-        fi
+    for CONFIG in "${ary[@]}" ; do
+        kibot $CONFIG $DIR $BOARD $SCHEMA $SKIP $OVERWRITE $VERBOSE
     done
 }
 
 function main {
     margs_precheck "$#" "$1"
-
-    args_process "$@"
-
+    args_process "$@" && msg_version
     run
 }
 
