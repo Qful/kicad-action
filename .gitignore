@@ -1,0 +1,12 @@
+.fontconfig
+.cache
+.config
+.local
+.gitconfig
+.gitattributes
+*.log
+kicad-exports
+test_data/output/*
+test_data/*.pro-bak
+test_data/*cache*
+test_data/*.xml

@@ -1,0 +1,30 @@
+name: 'kicad-exports'
+description: 'auto generate exports (schematics, gerbers, plots) for any KiCAD5 project.'
+author: 'nerdyscout'
+inputs:
+  config:
+    description: 'The plotting config file to use'
+    required: true
+  dir:
+    description: 'The output directory [default: .]'
+    required: false
+    default: '.'
+  board:
+    description: 'The PCB .kicad-pcb board file [default: first *.kicad_pcb found]'
+    required: false
+    # kibot itself defaults to first board found
+  schema:
+    description: 'The schematic file (.sch) [default: first *.sch found]'
+    required: false
+    # kibot itself defaults to first schematic found
+runs:
+  using: docker
+  image: 'Dockerfile'
+  args:
+    -  -c ${{ inputs.config }}
+    -  -d ${{ inputs.dir }}
+    -  -b ${{ inputs.board }}
+    -  -e ${{ inputs.schema }}
+branding:
+  icon: 'cpu'
+  color: 'green'

@@ -1,0 +1,24 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: build
+        run: make
+      - name: show log if build failed
+        if: ${{ failure() }}
+        run: cat build.log
+      - name: install shunit2
+        run: sudo apt-get install -y shunit2
+      - name: run tests
+        run: make test-ci
